@@ -8,6 +8,7 @@
     - [x] Fix Suspense boundary in Login page
     - [x] Verify local build (Passed)
     - [x] Check Git file casing (Verified)
-    - [x] Re-install Radix dependencies (In Progress)
-    - [ ] Push fix to GitHub
+    - [x] Re-install Radix dependencies (Done)
+    - [x] Fix .gitignore blocking src/lib (Done)
+    - [ ] Force add missing files and push
 - [ ] Verify Deployment
