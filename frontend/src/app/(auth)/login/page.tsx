@@ -3,6 +3,7 @@
 import React, { useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useAuthStore } from "@/store/auth"
+import api from "@/lib/api"
 
 export default function LoginPage() {
     return (
@@ -51,40 +52,30 @@ function LoginForm() {
                 const password = formData.get("password") as string
 
                 try {
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"}/login/access-token`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                        body: new URLSearchParams({ username: email, password })
-                    })
+                    // Use the centralized api instance for consistent base URL/headers
+                    const response = await api.post("/login/access-token",
+                        new URLSearchParams({ username: email, password }),
+                        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+                    )
 
-                    if (!response.ok) {
-                        const error = await response.json()
-                        alert(error.detail || "Login failed")
-                        return
-                    }
-
-                    const data = await response.json()
+                    const data = response.data
 
                     // Fetch user data
-                    const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"}/users/me`, {
+                    const userResponse = await api.get("/users/me", {
                         headers: { "Authorization": `Bearer ${data.access_token}` }
                     })
 
-                    if (!userResponse.ok) {
-                        alert("Failed to fetch user data")
-                        return
-                    }
-
-                    const userData = await userResponse.json()
+                    const userData = userResponse.data
 
                     // Store in Zustand
                     login(data.access_token, userData)
 
                     console.log("✓ Login successful, redirecting to dashboard...")
                     router.push("/dashboard")
-                } catch (error) {
+                } catch (error: any) {
                     console.error("Login error:", error)
-                    alert("Login failed. Please try again.")
+                    const errorMessage = error.response?.data?.detail || "Login failed. Please try again."
+                    alert(errorMessage)
                 }
             }}>
                 <div className="space-y-4">
