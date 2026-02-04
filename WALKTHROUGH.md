@@ -11,10 +11,31 @@ I have updated your application to support deployment to production environments
 ### Backend
 1.  **CORS Configuration**: Updated `core/config.py` and `main.py` to allow allowed origins to be set via `BACKEND_CORS_ORIGINS`.
 2.  **Local Environment**: Updated `.env` to allow `localhost` connections explicitly.
+3.  **Git Configuration**: Initialized a Git repository and consolidated the project structure.
 
 ## Next Steps for Deployment
 
-### 1. Frontend (e.g., Vercel)
+### 1. Push to GitHub (Completed)
+- Your code is now live at: https://github.com/yashrjgrg8630/career-ai-platform
+
+### 2. Frontend (Vercel)
+1.  Go to [Vercel](https://vercel.com) and log in.
+2.  Click **"Add New..."** -> **"Project"**.
+3.  Import `career-ai-platform` from your GitHub.
+4.  In **Environment Variables**, add:
+    - `NEXT_PUBLIC_API_URL`: The URL of your deployed backend (see step 3).
+5.  Click **Deploy**.
+
+### 3. Backend (Render / Railway)
+1.  Go to [Render](https://render.com) or [Railway](https://railway.app).
+2.  Create a new **Web Service**.
+3.  Connect your GitHub repo `career-ai-platform`.
+4.  **Build Command**: `pip install -r requirements.txt` (Render usually detects this).
+5.  **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`.
+6.  **Environment Variables**:
+    - `BACKEND_CORS_ORIGINS`: Your Vercel frontend URL (e.g., `https://career-ai-platform.vercel.app`).
+    - `DATABASE_URL`: Your production database URL (Render provides one if you add a Postgres database).
+    - `SECRET_KEY`: A strong random string.
 When deploying your frontend, set the following environment variable in your project settings:
 - `NEXT_PUBLIC_API_URL`: The URL of your deployed backend (e.g., `https://my-backend.onrender.com/api/v1`)
 
