@@ -32,5 +32,23 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
+
+# Auto-run migrations on startup (for Render)
+from alembic.config import Config
+from alembic import command
+import os
+
+@app.on_event("startup")
+async def startup_event():
+    # Only run if we are in production or seemingly so
+    # Adjust condition as needed, or just run it always for this simple app
+    try:
+        print("Running database migrations...")
+        alembic_cfg = Config("alembic.ini")
+        command.upgrade(alembic_cfg, "head")
+        print("Migrations completed successfully.")
+    except Exception as e:
+        print(f"Migration failed: {e}")
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
