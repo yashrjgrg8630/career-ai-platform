@@ -13,14 +13,18 @@ app = FastAPI(
 )
 
 # CORS Configuration - Allow frontend to communicate with backend
+# CORS Configuration - Always allow specific origins or wildcard for now
+origins = ["*"]
 if settings.BACKEND_CORS_ORIGINS:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    origins = [str(origin) for origin in settings.BACKEND_CORS_ORIGINS]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
